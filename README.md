@@ -1,120 +1,287 @@
-# 🔒 Firewall Rules Audit — Minor Project
+# 🔒 Firewall Rules Audit
 
-## Network Security | Firewall Rules Configuration & Audit
+> **Minor Project | Network Security | Linux iptables Firewall Configuration & Security Audit**
 
-**Project By:** Sujal & Kowshik Chowdhary
+**Author:** **Lalit Bairwa**
 
 ---
 
-## 📋 Project Overview
- 
-This project demonstrates the configuration and auditing of Linux `iptables` firewall rules for a **Small Office/Home Office (SOHO)** network. It showcases foundational network security skills including:
+## 📖 Project Overview
 
-- Linux iptables configuration from scratch
-- Allow/deny rule logic and policy thinking
-- Security documentation and gap analysis
-- Understanding of network perimeter defense
+**Firewall Rules Audit** is a Linux-based network security project that demonstrates the implementation, configuration, and auditing of firewall rules using **iptables**.
 
-## 🏗️ Network Scenario
+The project follows a **Default Deny** security model, allowing only authorized network traffic while blocking unnecessary or potentially malicious connections. A Python-based audit tool analyzes the firewall configuration and helps identify security issues based on common firewall security practices.
 
-**Small Office / Home Network** with the following services:
+This project was developed as part of a **Network Security Minor Project** to demonstrate practical knowledge of Linux firewall administration, network hardening, and security auditing.
 
-| Service       | Port(s)       | Protocol | Access Policy          |
-|---------------|---------------|----------|------------------------|
-| SSH           | 22            | TCP      | Restricted (admin IPs) |
-| HTTP          | 80            | TCP      | Public                 |
-| HTTPS         | 443           | TCP      | Public                 |
-| DNS           | 53            | TCP/UDP  | Outbound only          |
-| ICMP (Ping)   | —             | ICMP     | Rate-limited           |
+---
 
-**Network Topology:**
+# 🎯 Objectives
+
+* Configure a secure Linux firewall using iptables.
+* Implement a Default Deny firewall policy.
+* Protect network services from unauthorized access.
+* Audit firewall rules using Python automation.
+* Perform security testing before and after firewall implementation.
+* Document security findings and recommendations.
+
+---
+
+# 🛠 Technologies Used
+
+* Linux
+* iptables (Netfilter)
+* Bash Shell
+* Python 3
+* Nmap
+* Git & GitHub
+
+---
+
+# 🌐 Network Scenario
+
+The project simulates a Small Office/Home Office (SOHO) environment protected by a Linux firewall.
+
 ```
-                    ┌──────────────┐
-   Internet ────────│   Firewall   │──────── Internal LAN
-                    │  (iptables)  │         192.168.1.0/24
-                    └──────────────┘
-                          │
-                    ┌─────┴──────┐
-                    │ Web Server │
-                    │ 192.168.1.10│
-                    └────────────┘
+                 Internet
+                     │
+             ┌────────────────┐
+             │    Firewall    │
+             │    iptables    │
+             └───────┬────────┘
+                     │
+          ┌──────────┴──────────┐
+          │                     │
+   Internal Network        Web Server
+    192.168.1.0/24       192.168.1.10
 ```
 
-## 📁 Project Structure
+---
+
+# 🔐 Firewall Policy
+
+| Service | Port | Protocol | Policy            |
+| ------- | ---- | -------- | ----------------- |
+| SSH     | 22   | TCP      | Restricted Access |
+| HTTP    | 80   | TCP      | Allowed           |
+| HTTPS   | 443  | TCP      | Allowed           |
+| DNS     | 53   | TCP/UDP  | Outbound Only     |
+| ICMP    | —    | ICMP     | Rate Limited      |
+
+---
+
+# 📂 Project Structure
 
 ```
 firewall-rules-audit/
 │
-├── README.md                        # This file
+├── README.md
+├── LICENSE
+├── .gitignore
+│
 ├── scripts/
-│   ├── firewall_setup.sh            # Main iptables configuration script
-│   ├── firewall_reset.sh            # Script to flush/reset all rules
-│   └── firewall_status.sh           # Script to display current rules
+│   ├── firewall_setup.sh
+│   ├── firewall_status.sh
+│   └── firewall_reset.sh
 │
 ├── audit/
-│   ├── audit_firewall.py            # Python audit script (parses & analyzes rules)
-│   └── sample_iptables_output.txt   # Sample iptables output for testing
+│   ├── audit_firewall.py
+│   └── sample_iptables_output.txt
 │
 ├── docs/
-│   ├── audit_report.md              # Complete security audit report
-│   └── gap_analysis.md              # Security gap analysis document
+│   ├── audit_report.md
+│   ├── gap_analysis.md
+│   ├── before_firewall.nmap
+│   ├── after_firewall.nmap
+│   └── presentation_notes.md
 │
-└── diagrams/
-    └── network_topology.txt         # ASCII network diagram
+├── diagrams/
+│   ├── network_topology.txt
+│   └── network_topology.png
+│
+└── screenshots/
+    ├── firewall_rules.png
+    ├── audit_output.png
+    ├── nmap_before.png
+    ├── nmap_after.png
+    ├── ssh_connection.png
+    ├── server_terminal.png
+    └── firewall_server.png
 ```
 
-## 🚀 How to Use
+---
 
-### 1. Apply Firewall Rules
+# 🚀 Installation
+
+Clone the repository:
+
 ```bash
-sudo chmod +x scripts/firewall_setup.sh
+git clone https://github.com/yourusername/firewall-rules-audit.git
+cd firewall-rules-audit
+```
+
+---
+
+# ⚙ Configure Firewall
+
+Make the scripts executable:
+
+```bash
+chmod +x scripts/*.sh
+```
+
+Apply firewall rules:
+
+```bash
 sudo ./scripts/firewall_setup.sh
 ```
 
-### 2. Check Firewall Status
+---
+
+# 📋 Check Firewall Status
+
 ```bash
 sudo ./scripts/firewall_status.sh
 ```
 
-### 3. Run the Audit Script
+---
+
+# 🔍 Perform Firewall Audit
+
+Export the current firewall configuration:
+
 ```bash
-# Generate current rules and audit them
 sudo iptables -L -n -v --line-numbers > audit/sample_iptables_output.txt
+```
+
+Run the audit tool:
+
+```bash
 python3 audit/audit_firewall.py
 ```
 
-### 4. Reset Firewall (if needed)
+---
+
+# 🔄 Reset Firewall
+
 ```bash
 sudo ./scripts/firewall_reset.sh
 ```
 
-## 🔑 Key Concepts Demonstrated
+---
 
-1. **Default Deny Policy** — Drop all traffic by default, allow only what's needed
-2. **Stateful Inspection** — Using connection tracking (`conntrack`) for established sessions
-3. **Rate Limiting** — Preventing brute-force and DoS attacks
-4. **Logging** — Logging dropped packets for forensic analysis
-5. **Egress Filtering** — Controlling outbound traffic to prevent data exfiltration
-6. **Anti-Spoofing** — Blocking packets with spoofed source addresses
+# 🧪 Security Testing
 
-## 📊 Audit Findings Summary
+The firewall configuration was verified using **Nmap** before and after applying firewall rules.
 
-| Category            | Status    | Details                         |
-|---------------------|-----------|---------------------------------|
-| Default Policy      | ✅ PASS   | Default DROP on INPUT/FORWARD   |
-| SSH Hardening       | ✅ PASS   | Rate-limited, restricted IPs    |
-| Logging             | ✅ PASS   | Dropped packets logged          |
-| Anti-Spoofing       | ✅ PASS   | RFC 1918 ingress blocked        |
-| Egress Filtering    | ⚠️ PARTIAL| Only essential ports allowed    |
-| ICMP                | ✅ PASS   | Rate-limited, type-restricted   |
+The project includes:
 
-## 📚 References
-
-- [Netfilter/iptables Official Documentation](https://netfilter.org/documentation/)
-- [CIS Benchmark for Linux](https://www.cisecurity.org/benchmark/distribution_independent_linux)
-- [NIST SP 800-41 Rev.1 — Guidelines on Firewalls and Firewall Policy](https://csrc.nist.gov/publications/detail/sp/800-41/rev-1/final)
-- [SANS Institute — Firewall Best Practices](https://www.sans.org/white-papers/)
+* Nmap scan before firewall configuration
+* Nmap scan after firewall configuration
+* Firewall rule verification
+* SSH connectivity testing
+* Automated firewall audit
 
 ---
 
-> **Note:** This project is for educational purposes. Always test firewall rules in a safe lab environment before deploying to production systems.
+# 🛡 Security Features
+
+* Default Deny Policy
+* Stateful Packet Inspection
+* SSH Hardening
+* ICMP Rate Limiting
+* Firewall Rule Logging
+* Egress Filtering
+* Automated Firewall Rule Analysis
+* Basic Network Hardening
+
+---
+
+# 📊 Audit Summary
+
+| Security Control  | Status |
+| ----------------- | ------ |
+| Default Policy    | ✅ PASS |
+| SSH Protection    | ✅ PASS |
+| Firewall Logging  | ✅ PASS |
+| ICMP Protection   | ✅ PASS |
+| Rule Verification | ✅ PASS |
+| Automated Audit   | ✅ PASS |
+
+---
+
+# 📸 Screenshots
+
+The repository includes screenshots demonstrating:
+
+* Firewall configuration
+* iptables rule table
+* SSH connection
+* Python audit output
+* Nmap scan before firewall
+* Nmap scan after firewall
+* Firewall server terminal
+
+---
+
+# 📚 Documentation
+
+Additional documentation is available in the **docs/** directory:
+
+* Audit Report
+* Gap Analysis
+* Nmap Scan Results
+* Presentation Notes
+
+---
+
+# 🎓 Learning Outcomes
+
+This project demonstrates practical skills in:
+
+* Linux Administration
+* Firewall Configuration
+* Network Security
+* Bash Scripting
+* Python Automation
+* Security Auditing
+* Network Hardening
+* Nmap Security Assessment
+
+---
+
+# 🚀 Future Improvements
+
+* IPv6 Firewall Support
+* nftables Migration
+* PDF Audit Report Generation
+* Web-based Firewall Dashboard
+* Email Alerting
+* Automatic Rule Backup & Restore
+* Firewall Rule Visualization
+
+---
+
+# 📚 References
+
+* Netfilter / iptables Documentation
+* NIST SP 800-41 Rev.1 – Guidelines on Firewalls and Firewall Policy
+* CIS Linux Benchmarks
+* SANS Institute – Firewall Best Practices
+* Nmap Documentation
+
+---
+
+# ⚠ Disclaimer
+
+This project is intended for educational and laboratory purposes only. Test firewall rules in a controlled environment before deploying them to production systems.
+
+---
+
+# 👨‍💻 Author
+
+**Lalit Bairwa**
+
+**B.Tech CSE (Cyber Security)**
+
+**Minor Project – Network Security**
