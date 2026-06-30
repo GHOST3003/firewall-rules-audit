@@ -1,0 +1,63 @@
+                        ┌──────────────────┐
+                        │    INTERNET      │
+                        │  (Untrusted)     │
+                        └────────┬─────────┘
+                                 │
+                        ┌────────┴─────────┐
+                        │    FIREWALL       │
+                        │                   │
+                        │  eth0 (external)  │──── WAN / ISP
+                        │                   │
+                        │  Rules Applied:   │
+                        │  - Default DENY   │
+                        │  - Anti-Spoofing  │
+                        │  - SYN Protection │
+                        │  - Rate Limiting  │
+                        │  - Logging        │
+                        │                   │
+                        │  eth1 (internal)  │──── LAN
+                        │                   │
+                        └────────┬─────────┘
+                                 │
+                    ┌────────────┼────────────┐
+                    │            │            │
+              ┌─────┴────┐ ┌────┴─────┐ ┌────┴──────────┐
+              │Web Server│ │Admin PCs │ │ Workstations  │
+              │          │ │          │ │               │
+              │IP: .1.10 │ │IP: .1.1  │ │IP: .1.15-.254│
+              │          │ │   to     │ │               │
+              │Ports:    │ │   .1.14  │ │Access:        │
+              │ 80 (HTTP)│ │          │ │ HTTP/HTTPS    │
+              │443(HTTPS)│ │Access:   │ │ DNS (out)     │
+              │          │ │ SSH (22) │ │               │
+              └──────────┘ │ HTTP/S   │ └───────────────┘
+                           │ DNS(out) │
+                           └──────────┘
+
+Network Details:
+================
+Internal Network : 192.168.1.0/24  (256 hosts)
+Admin Subnet     : 192.168.1.0/28  (14 usable hosts)
+Web Server       : 192.168.1.10
+DNS Servers      : 8.8.8.8, 8.8.4.4 (Google Public DNS)
+
+Firewall Chains:
+================
+INPUT   → Policy: DROP (deny all incoming by default)
+FORWARD → Policy: DROP (deny all forwarding by default)
+OUTPUT  → Policy: DROP (deny all outgoing by default)
+
+Custom Chains:
+==============
+SSH_RULES → Handles SSH access (rate-limited, IP-restricted)
+
+Traffic Flow:
+=============
+INBOUND:
+  Internet → [Anti-Spoof] → [SYN Check] → [Conntrack] → [Service Rules] → Internal
+
+OUTBOUND:
+  Internal → [Conntrack] → [Port Rules] → [DNS Restrict] → Internet
+
+DROPPED:
+  All dropped packets → [LOG] → /var/log/syslog
